@@ -1,6 +1,7 @@
 from http import HTTPStatus
 from typing import Annotated
 
+from email_validator import EmailNotValidError
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -8,12 +9,21 @@ from sqlalchemy.orm import Session
 from softsquat.database import get_session
 from softsquat.models import User
 from softsquat.schemas import UserPublic, UserSchema
+from softsquat.services.email_service import check_email
 
 router = APIRouter(prefix='/users', tags=['users'])
+SessionDep = Annotated[Session, Depends(get_session)]
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
-def create_user(user: UserSchema, session: Annotated[Session, Depends(get_session)]):
+def create_user(user: UserSchema, session: SessionDep):
+    try:
+        user.email = check_email(user.email)
+    except EmailNotValidError:
+        raise HTTPException(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail='Email is not valid'
+        )
+
     db_user = session.scalar(
         select(User).where((User.username == user.username) | (User.email == user.email))
     )
@@ -44,7 +54,7 @@ def create_user(user: UserSchema, session: Annotated[Session, Depends(get_sessio
 
 
 @router.get('/{user_id}', response_model=UserPublic, status_code=HTTPStatus.ACCEPTED)
-def get_user(user_id: int, session: Annotated[Session, Depends(get_session)]):
+def get_user(user_id: int, session: SessionDep):
     db_user = session.get(User, user_id)
     if db_user is None:
         raise HTTPException(
@@ -59,7 +69,7 @@ def get_user(user_id: int, session: Annotated[Session, Depends(get_session)]):
 def update_user(
     user_id: int,
     user: UserSchema,
-    session: Annotated[Session, Depends(get_session)],
+    session: SessionDep,
 ):
     db_user = session.get(User, user_id)
     if db_user is None:
@@ -96,7 +106,7 @@ def update_user(
 
 
 @router.delete('/{user_id}', status_code=HTTPStatus.NO_CONTENT)
-def delete_user(user_id: int, session: Annotated[Session, Depends(get_session)]):
+def delete_user(user_id: int, session: SessionDep):
     db_user = session.get(User, user_id)
     if db_user is None:
         raise HTTPException(

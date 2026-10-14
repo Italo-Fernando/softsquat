@@ -8,3 +8,4 @@ class Settings(BaseSettings):
     )
 
     DATABASE_URL: str = Field(init=False)
+    EMAIL_CHECK_DELIVERABILITY: bool = Field(init=False)
