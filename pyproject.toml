@@ -1,0 +1,62 @@
+[project]
+name = "softsquat"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Piquerido",email = "main.italofernando@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14, <4.0"
+dependencies = [
+    "fastapi[standard] (>=0.143.0,<0.144.0)",
+    "pydantic (>=2.14.1,<3.0.0)",
+    "pydantic-settings (>=2.15.0,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.1.1,<10.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)",
+    "ruff (>=0.17.0,<0.18.0)",
+    "typos (>=1.51.1,<2.0.0)",
+    "httpx2 (>=2.13.1,<3.0.0)",
+    "taskipy (>=1.14.1,<2.0.0)",
+    "pytest-random-order (>=1.2.0,<2.0.0)"
+]
+
+[tool.ruff]
+line-length = 79
+extend-exclude = ['migrations']
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT', 'FAST']
+
+[tool.ruff.format]
+preview = true
+quote-style = 'single'
+
+[tool.pytest.ini_options]
+pythonpath = "."
+addopts = '-p no:warnings'
+
+[tool.typos.files]
+extend-exclude = ["*.md"]
+
+[tool.typos.default.extend-words]
+selectin = "selectin"
+
+[tool.taskipy.tasks]
+pre_lint = 'typos'
+lint = 'ruff check'
+pre_format = 'ruff check --fix'
+format = 'ruff format'
+run = 'fastapi dev softsquat/app.py'
+pre_test = 'task lint'
+test = 'pytest -s -x --cov=softsquat -vv'
+post_test = 'coverage html'
