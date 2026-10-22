@@ -13,6 +13,7 @@ from sqlalchemy import select
 from softsquat.database import get_session
 from softsquat.models import User
 from softsquat.settings import Settings
+from sqlalchemy.ext.asyncio import AsyncSession
 
 settings = Settings()
 pwd_context = PasswordHash.recommended()
@@ -37,8 +38,8 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def get_current_user(
-    token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)
+async def get_current_user(
+    token: str = Depends(oauth2_scheme), session: AsyncSession = Depends(get_session)
 ):
     credentials_exception = HTTPException(
         status_code=HTTPStatus.UNAUTHORIZED,
@@ -53,7 +54,7 @@ def get_current_user(
     except DecodeError:
         raise credentials_exception
 
-    user = session.scalar(select(User).where(User.email == email))
+    user = await session.scalar(select(User).where(User.email == email))
     if not user:
         raise credentials_exception
 

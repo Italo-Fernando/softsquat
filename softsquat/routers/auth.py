@@ -10,16 +10,19 @@ from softsquat.database import get_session
 from softsquat.models import User
 from softsquat.schemas import Token
 from softsquat.security import create_access_token, verify_password
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix='/auth', tags=['auth'])
+OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
+SessionDep = Annotated[AsyncSession, Depends(get_session)]
 
 
 @router.post('/token', response_model=Token)
-def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    session: Annotated[Session, Depends(get_session)],
+async def login_for_access_token(
+    form_data: OAuth2Form,
+    session: SessionDep,
 ):
-    user = session.scalar(select(User).where(User.email == form_data.username))
+    user = await session.scalar(select(User).where(User.email == form_data.username))
     if not user:
         raise HTTPException(
             status_code=HTTPStatus.UNAUTHORIZED, detail='Incorrect username or password'
