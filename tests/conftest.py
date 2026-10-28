@@ -7,7 +7,7 @@ import pytest_asyncio
 from fastapi.testclient import TestClient
 from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.pool import StaticPool
+from testcontainers.postgres import PostgresContainer
 
 from softsquat.app import app
 from softsquat.database import get_session
@@ -45,12 +45,14 @@ def client(session):
 
 
 @pytest_asyncio.fixture
-async def session():
-    engine = create_async_engine(
-        'sqlite+aiosqlite:///:memory:',
-        connect_args={'check_same_thread': False},
-        poolclass=StaticPool,
-    )
+async def session(engine):
+    # engine = create_async_engine(
+    #     'sqlite+aiosqlite:///:memory:',
+    #     connect_args={'check_same_thread': False},
+    #     poolclass=StaticPool,
+    # )
+
+    # engine = create_async_engine(Settings().DATABASE_URL)
 
     async with engine.begin() as conn:
         await conn.run_sync(table_registry.metadata.create_all)
@@ -60,7 +62,6 @@ async def session():
 
     async with engine.begin() as conn:
         await conn.run_sync(table_registry.metadata.drop_all)
-
     await engine.dispose()  # Dispose of the engine to close all connections and clean up
 
 
@@ -124,3 +125,10 @@ class UserFactory(factory.Factory):
     username = factory.Sequence(lambda n: f'test{n}')
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
     password = factory.LazyAttribute(lambda obj: f'{obj.username}@example.com')
+
+
+@pytest.fixture(scope='session')
+def engine():
+    with PostgresContainer('postgres:16', driver='psycopg') as postgres:
+        _engine = create_async_engine(postgres.get_connection_url())
+        yield _engine
