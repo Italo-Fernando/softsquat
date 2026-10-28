@@ -1,8 +1,10 @@
 from dataclasses import asdict
 
-from sqlalchemy import select
 import pytest
+from sqlalchemy import select
+
 from softsquat.models import User
+
 
 @pytest.mark.asyncio
 async def test_create_user(session, mock_db_time):

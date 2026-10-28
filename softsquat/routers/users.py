@@ -5,7 +5,6 @@ from email_validator import EmailNotValidError
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from softsquat.database import get_session
@@ -61,9 +60,10 @@ async def create_user(user: UserSchema, session: SessionDep):
 
 @router.get('/', response_model=UserList, status_code=HTTPStatus.OK)
 async def get_users(session: SessionDep, filter_users: Annotated[FilterPage, Depends()]):
-    users = await session.scalars(
+    result = await session.scalars(
         select(User).offset(filter_users.offset).limit(filter_users.limit)
-    ).all()
+    )
+    users = result.all()
     return {'users': users}
 
 

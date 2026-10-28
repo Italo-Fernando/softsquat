@@ -5,19 +5,20 @@ from zoneinfo import ZoneInfo
 from fastapi import HTTPException
 from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordBearer
-from jwt import DecodeError, decode, encode
+from jwt import DecodeError, ExpiredSignatureError, decode, encode
 from pwdlib import PasswordHash
-from requests import Session
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from softsquat.database import get_session
 from softsquat.models import User
 from softsquat.settings import Settings
-from sqlalchemy.ext.asyncio import AsyncSession
 
 settings = Settings()
 pwd_context = PasswordHash.recommended()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl='auth/token', refreshUrl='auth/refresh_token'
+)
 
 
 def get_password_hash(password: str):
@@ -53,9 +54,28 @@ async def get_current_user(
             raise credentials_exception
     except DecodeError:
         raise credentials_exception
+    except ExpiredSignatureError:
+        raise credentials_exception
 
     user = await session.scalar(select(User).where(User.email == email))
     if not user:
         raise credentials_exception
 
     return user
+
+
+def test_token_inexistent_user(client):
+    response = client.post(
+        '/auth/token',
+        data={'username': 'no_user@no_domain.com', 'password': 'testtest'},
+    )
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {'detail': 'Incorrect email or password'}
+
+
+def test_token_wrong_password(client, user):
+    response = client.post(
+        '/auth/token', data={'username': user.email, 'password': 'wrong_password'}
+    )
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {'detail': 'Incorrect email or password'}
