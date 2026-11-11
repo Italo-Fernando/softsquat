@@ -64,3 +64,19 @@ def test_get_current_user_does_not_exists(client):
 
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json() == {'detail': 'Could not validate credentials'}
+
+def test_token_inexistent_user(client):
+    response = client.post(
+        '/auth/token',
+        data={'username': 'no_user@no_domain.com', 'password': 'testtest'},
+    )
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {'detail': 'Incorrect email or password'}
+
+
+def test_token_wrong_password(client, user):
+    response = client.post(
+        '/auth/token', data={'username': user.email, 'password': 'wrong_password'}
+    )
+    assert response.status_code == HTTPStatus.UNAUTHORIZED
+    assert response.json() == {'detail': 'Incorrect email or password'}

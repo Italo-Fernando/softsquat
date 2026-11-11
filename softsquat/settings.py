@@ -12,3 +12,5 @@ class Settings(BaseSettings):
     SECRET_KEY: str = Field(init=False)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(init=False)
     ALGORITHM: str = Field(init=False)
+    VOYAGE_KEY: str = Field(init=False)
+    EMBED_MODEL: str = Field(init=False)
