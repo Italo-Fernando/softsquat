@@ -11,6 +11,10 @@ jobs:
       ALGORITHM: ${{ secrets.ALGORITHM }}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
       EMAIL_CHECK_DELIVERABILITY: false
+      GROQ_API_KEY: ${{secrets.GROQ_API_KEY}}
+      GROQ_MODEL: ${{secrets.GROQ_MODEL}}
+      EMBED_MODEL: ${{secrets.EMBED_MODEL}}
+      VOYAGE_KEY: ${{secrets.VOYAGE_KEY}}
 
 
     steps:
