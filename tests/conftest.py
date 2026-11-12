@@ -133,3 +133,17 @@ def engine():
     with PostgresContainer('pgvector/pgvector:pg16', driver='psycopg') as postgres:
         _engine = create_async_engine(postgres.get_connection_url())
         yield _engine
+
+@pytest.fixture
+def fake_embeddings(monkeypatch):
+    from softsquat.models import EMBED_DIM
+    from softsquat.services import attach_service, retrieval_service
+
+    async def fake_docs(texts):
+        return [[1.0] + [0.0] * (EMBED_DIM - 1) for _ in texts]
+
+    async def fake_query(_text):
+        return [1.0] + [0.0] * (EMBED_DIM - 1)
+
+    monkeypatch.setattr(attach_service, 'embed_documents', fake_docs)
+    monkeypatch.setattr(retrieval_service, 'embed_query', fake_query)

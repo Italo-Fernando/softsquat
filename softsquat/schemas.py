@@ -38,17 +38,14 @@ class FilterPage(BaseModel):
     limit: int = Field(default=100, ge=1)
 
 
-class SupportRequest(BaseModel):
-    email: EmailStr
-    message: str = Field(..., min_length=1, max_length=1000)
+class ChatRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=2000)
 
+class ChatSource(BaseModel):
+    document_id: int
+    title: str
+    chunk_position: int
 
-class SupportClassification(BaseModel):
-    category: Literal['database', 'authentication', 'network', 'billing', 'other']
-    priority: Literal['low', 'medium', 'high']
-    summary: str
-    require_human: bool
-
-
-class SupportResponse(SupportClassification):
-    user: UserPublic
+class ChatAnswer(BaseModel):
+    answer: str
+    sources: list[ChatSource]
