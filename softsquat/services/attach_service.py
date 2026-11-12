@@ -1,10 +1,11 @@
 from softsquat.models import Chunk, Document
 from softsquat.services.embedding_service import embed_documents
 
+
 def chunk_text(text: str, size: int = 800, overlap: int = 150) -> list[str]:
     chunks, start = [], 0
     while start < len(text):
-        chunks.append(text[start:start + size])
+        chunks.append(text[start : start + size])
         start += size - overlap
     return chunks
 

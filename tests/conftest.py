@@ -11,8 +11,9 @@ from testcontainers.postgres import PostgresContainer
 
 from softsquat.app import app
 from softsquat.database import get_session
-from softsquat.models import User, table_registry
+from softsquat.models import EMBED_DIM, User, table_registry
 from softsquat.security import get_password_hash
+from softsquat.services import attach_service, retrieval_service
 
 
 @pytest.fixture
@@ -134,10 +135,9 @@ def engine():
         _engine = create_async_engine(postgres.get_connection_url())
         yield _engine
 
+
 @pytest.fixture
 def fake_embeddings(monkeypatch):
-    from softsquat.models import EMBED_DIM
-    from softsquat.services import attach_service, retrieval_service
 
     async def fake_docs(texts):
         return [[1.0] + [0.0] * (EMBED_DIM - 1) for _ in texts]

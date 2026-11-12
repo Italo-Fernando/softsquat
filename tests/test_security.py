@@ -65,6 +65,7 @@ def test_get_current_user_does_not_exists(client):
     assert response.status_code == HTTPStatus.UNAUTHORIZED
     assert response.json() == {'detail': 'Could not validate credentials'}
 
+
 def test_token_inexistent_user(client):
     response = client.post(
         '/auth/token',

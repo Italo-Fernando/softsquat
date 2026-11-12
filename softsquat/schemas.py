@@ -1,5 +1,3 @@
-from typing import Literal
-
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
@@ -41,10 +39,12 @@ class FilterPage(BaseModel):
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=2000)
 
+
 class ChatSource(BaseModel):
     document_id: int
     title: str
     chunk_position: int
+
 
 class ChatAnswer(BaseModel):
     answer: str

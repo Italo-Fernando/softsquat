@@ -15,4 +15,4 @@ class Settings(BaseSettings):
     VOYAGE_KEY: str = Field(init=False)
     EMBED_MODEL: str = Field(init=False)
     GROQ_API_KEY: str = Field(init=False)
-    GROQ_MODEL: str = Field(init=False) 
+    GROQ_MODEL: str = Field(init=False)

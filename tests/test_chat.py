@@ -10,9 +10,7 @@ def test_chat_ask_requires_authentication(client):
     assert response.status_code == HTTPStatus.UNAUTHORIZED
 
 
-def test_chat_ask_calls_rag_for_authenticated_user(
-    client, token, user, monkeypatch
-):
+def test_chat_ask_calls_rag_for_authenticated_user(client, token, user, monkeypatch):
     captured = {}
 
     async def fake_answer_question(*, session, user_id: int, question: str):

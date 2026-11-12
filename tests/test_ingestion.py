@@ -19,9 +19,7 @@ async def test_ingest_persists_document_chunks_and_embeddings(
     )
 
     chunks = await session.scalars(
-        select(Chunk)
-        .where(Chunk.document_id == document.id)
-        .order_by(Chunk.position)
+        select(Chunk).where(Chunk.document_id == document.id).order_by(Chunk.position)
     )
     chunks = list(chunks.all())
 

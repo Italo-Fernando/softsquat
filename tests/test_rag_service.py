@@ -51,7 +51,5 @@ async def test_answer_question_sends_retrieved_context_and_returns_sources(
     assert 'How do I reset my password?' in prompt
     assert answer == ChatAnswer(
         answer='Use the account settings.',
-        sources=[
-            ChatSource(document_id=42, title='Account guide', chunk_position=3)
-        ],
+        sources=[ChatSource(document_id=42, title='Account guide', chunk_position=3)],
     )
