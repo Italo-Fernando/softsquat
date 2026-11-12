@@ -16,3 +16,8 @@ class Settings(BaseSettings):
     EMBED_MODEL: str = Field(init=False)
     GROQ_API_KEY: str = Field(init=False)
     GROQ_MODEL: str = Field(init=False)
+    RETRIEVAL_MAX_DISTANCE: float = Field(init=False)
+    EMBED_BATCH_SIZE: int = 64
+    EMBED_RPM: int = Field(init=False)
+    EMBED_TPM: int = Field(init=False)
+    MAX_UPLOAD_BYTES: int = 100_000

@@ -25,7 +25,7 @@ class User:
 class Document:
     __tablename__ = 'documents'
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), index=True)
     title: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(init=False, server_default=func.now())
 
@@ -35,7 +35,7 @@ class Chunk:
     __tablename__ = 'chunks'
     id: Mapped[int] = mapped_column(init=False, primary_key=True)
     document_id: Mapped[int] = mapped_column(
-        ForeignKey('documents.id', ondelete='CASCADE')
+        ForeignKey('documents.id', ondelete='CASCADE'), index=True
     )
     content: Mapped[str] = mapped_column(Text)
     embedding: Mapped[list[float]] = mapped_column(Vector(EMBED_DIM))

@@ -15,6 +15,9 @@ jobs:
       GROQ_MODEL: ${{secrets.GROQ_MODEL}}
       EMBED_MODEL: ${{secrets.EMBED_MODEL}}
       VOYAGE_KEY: ${{secrets.VOYAGE_KEY}}
+      EMBED_RPM: ${{secrets.EMBED_RPM}}
+      EMBED_TPM: ${{secrets.EMBED_TPM}}
+      RETRIEVAL_MAX_DISTANCE: ${{secrets.RETRIEVAL_MAX_DISTANCE}}
 
 
     steps:

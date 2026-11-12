@@ -4,29 +4,45 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from voyageai.error import VoyageError
 
 from softsquat.database import get_session
 from softsquat.models import Document, User
 from softsquat.schemas import Message
 from softsquat.security import get_current_user
 from softsquat.services.attach_service import ingest
+from softsquat.settings import Settings
 
 router = APIRouter(prefix='/documents', tags=['documents'])
 CurrentUser = Annotated[User, Depends(get_current_user)]
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
+settings = Settings()
 
 
 @router.post('/', status_code=HTTPStatus.CREATED)
 async def upload_document(file: UploadFile, user: CurrentUser, session: SessionDep):
+    max_bytes = settings.MAX_UPLOAD_BYTES
+    raw = await file.read(max_bytes + 1)
+    if len(raw) > max_bytes:
+        raise HTTPException(
+            HTTPStatus.CONTENT_TOO_LARGE,
+            f'Arquivo muito grande (máximo {max_bytes} bytes)',
+        )
     try:
-        text = (await file.read()).decode('utf-8')
+        text = raw.decode('utf-8')
     except UnicodeDecodeError:
         raise HTTPException(
             HTTPStatus.UNPROCESSABLE_ENTITY, 'Envie um arquivo de texto UTF-8'
         )
     if not text.strip():
         raise HTTPException(HTTPStatus.UNPROCESSABLE_ENTITY, 'Arquivo vazio')
-    doc = await ingest(session, user.id, file.filename or 'sem título', text)
+    try:
+        doc = await ingest(session, user.id, file.filename or 'sem título', text)
+    except VoyageError as error:
+        raise HTTPException(
+            HTTPStatus.BAD_GATEWAY,
+            'Não foi possível gerar os embeddings agora, tente novamente mais tarde',
+        ) from error
     return {'id': doc.id, 'title': doc.title}
 
 

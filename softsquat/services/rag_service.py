@@ -24,6 +24,7 @@ async def answer_question(
         session=session,
         user_id=user_id,
         query=question,
+        max_distance=settings.RETRIEVAL_MAX_DISTANCE,
     )
 
     if not retrieved:
