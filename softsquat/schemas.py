@@ -18,8 +18,6 @@ class UserPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class UserDB:
-    id: int
 
 
 class UserList(BaseModel):

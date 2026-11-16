@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
 
-  fastzero_app:
+  softsquat_app:
     image: softsquat
     entrypoint: ./entrypoint.sh
     build: .

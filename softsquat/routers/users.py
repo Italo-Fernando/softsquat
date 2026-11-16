@@ -67,7 +67,7 @@ async def get_users(session: SessionDep, filter_users: Annotated[FilterPage, Dep
     return {'users': users}
 
 
-@router.get('/{user_id}', response_model=UserPublic, status_code=HTTPStatus.ACCEPTED)
+@router.get('/{user_id}', response_model=UserPublic, status_code=HTTPStatus.OK)
 async def get_user(user_id: int, session: SessionDep):
     db_user = await session.get(User, user_id)
     if db_user is None:
@@ -76,7 +76,7 @@ async def get_user(user_id: int, session: SessionDep):
             detail='User not found',
         )
 
-    return {'username': db_user.username, 'email': db_user.email}
+    return {'id': db_user.id, 'username': db_user.username, 'email': db_user.email}
 
 
 @router.put('/{user_id}', response_model=UserPublic, status_code=HTTPStatus.OK)
