@@ -2,6 +2,7 @@
 ## <img src="assets/stack_icon.svg" width="24" height="24" style="vertical-align: middle; margin-right: 4px;"> Stacks
 
 **Back-end**
+
 <img src="https://skillicons.dev/icons?i=py,fastapi,postgres&theme=dark&perline=3" alt="Back-end" />
 
 **DevOps**
