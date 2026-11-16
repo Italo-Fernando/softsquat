@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+     fill="none" stroke="#4285F4" stroke-width="1.8"
+     stroke-linecap="round" stroke-linejoin="round">
+  <!-- Top layer -->
+  <path d="M12 3.5 20 7.5 12 11.5 4 7.5 12 3.5Z"/>
+  <!-- Middle layer -->
+  <path d="M4 11.5 12 15.5 20 11.5"/>
+  <path d="M4 11.5v2.5l8 4 8-4v-2.5"/>
+  <!-- Bottom layer -->
+  <path d="M4 16.5 12 20.5 20 16.5"/>
+</svg>
