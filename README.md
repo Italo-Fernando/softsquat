@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/gorilla_emblem.svg" alt="Softsquat Logo" width="150" />
+</p>
+
 # Softsquat
 ## <img src="assets/stack_icon.svg" width="24" height="24" style="vertical-align: middle; margin-right: 4px;"> Stacks
 
@@ -13,10 +17,6 @@
 
 ### Pré-requisitos
 
-- Python 3.14+
-- [Poetry 2+](https://python-poetry.org/)
-- Docker com Docker Compose (para executar o PostgreSQL ou toda a aplicação em containers)
-
 Configure as variáveis exigidas pela aplicação em um arquivo `.env` na raiz:
 
 ```dotenv
@@ -26,9 +26,6 @@ SECRET_KEY=defina-uma-chave-local
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ALGORITHM=HS256
 ```
-
-Use uma chave secreta própria para o ambiente local e não compartilhe nem versione
-segredos reais.
 
 ### Executar localmente com Poetry
 
@@ -62,5 +59,3 @@ Nos dois modos, a documentação interativa da API fica em
 ```bash
 docker compose down
 ```
-
-O comando acima preserva os dados do volume do PostgreSQL.
